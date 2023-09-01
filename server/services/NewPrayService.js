@@ -21,9 +21,6 @@ class NewPrayService {
                 await this.sendMessage(bot, chatId, message);
             }
         });
-
-        motivo = '';
-        nome = '';
       } catch (error) {
         console.error(error);
       }
@@ -49,6 +46,9 @@ class NewPrayService {
         // Enviar os dados para um grupo específico
         const grupoId = process.env.GROUPID; // Substitua pelo ID do grupo real
         await bot.sendMessage(grupoId, `#PedidoOração:\n\n*Por quem orar:* ${nome}\n\n*Motivo:* ${motivo}\n\n*Enviado por:* ${msg.from.first_name} ${msg.from.last_name}`, {parse_mode: 'Markdown'});
+        motivo = '';
+        nome = '';
+        step = '';
     }
   }
   
