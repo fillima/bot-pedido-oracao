@@ -22,7 +22,6 @@ class NewPrayService {
                 step = await this.newReason(bot, chatId, message);
             } else if (step === MOTIVO) {
                 await this.sendMessage(bot, chatId, message);
-                bot.removeListener('message', this.messageListener);
             }
         };
 
