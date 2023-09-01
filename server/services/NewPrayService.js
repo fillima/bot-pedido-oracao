@@ -12,11 +12,11 @@ class NewPrayService {
         userState[chatId] = {};
         await this.newName(bot, chatId, msg);
 
-        await bot.on('message', (message) => {
+        bot.on('message', async (message) => {
             if (userState[chatId].state === NOME) {
-                this.newReason(bot, chatId, message);
+                await this.newReason(bot, chatId, message);
             } else if (userState[chatId].state === MOTIVO) {
-                this.sendMessage(bot, chatId, message);
+                await this.sendMessage(bot, chatId, message);
             }
 
             // Limpar os dados do usuário
