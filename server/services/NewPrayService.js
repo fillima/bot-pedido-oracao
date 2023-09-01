@@ -3,16 +3,16 @@ const NOME = 1;
 const MOTIVO = 2;
 
 // Armazenamento temporário dos dados do usuário
-const userState = {};
+let motivo = '';
+let nome = '';
+let step = '';
 
 class NewPrayService {
     async pray(bot, msg) {
       try {
         const chatId = msg.chat.id;
-        if (!userState[chatId]) {
-            userState[chatId] = {};
-        }
-        let step = await this.newName(bot, chatId, msg);
+        
+        step = await this.newName(bot, chatId, msg);
 
         bot.on('message', async (message) => {
             if (step === NOME) {
@@ -20,10 +20,10 @@ class NewPrayService {
             } else if (step === MOTIVO) {
                 await this.sendMessage(bot, chatId, message);
             }
+        });
 
-            // Limpar os dados do usuário
-            delete userState[chatId];
-        })
+        motivo = '';
+        nome = '';
       } catch (error) {
         console.error(error);
       }
@@ -38,17 +38,17 @@ class NewPrayService {
 
     async newReason(bot, chatId, msg) {
         await bot.sendMessage(chatId, "Ótimo! Agora envie o motivo de oração.");
-        userState[chatId].nome = msg.text;
+        nome = msg.text;
         return MOTIVO;
     }
 
     async sendMessage(bot, chatId, msg) {
-        userState[chatId].motivo = msg.text;
-        await bot.sendMessage(chatId, `Pedido de oração concluído:\n\n*Por quem vamos orar:* ${userState[chatId].nome}\n\n*Motivo:* ${userState[chatId].motivo}\n\nEnviaremos sua mensagem para o grupo *Todos IPUS*, para que possamos orar juntos`, {parse_mode: 'Markdown'});
+        motivo = msg.text;
+        await bot.sendMessage(chatId, `Pedido de oração concluído:\n\n*Por quem vamos orar:* ${nome}\n\n*Motivo:* ${motivo}\n\nEnviaremos sua mensagem para o grupo *Todos IPUS*, para que possamos orar juntos`, {parse_mode: 'Markdown'});
 
         // Enviar os dados para um grupo específico
         const grupoId = process.env.GROUPID; // Substitua pelo ID do grupo real
-        await bot.sendMessage(grupoId, `#PedidoOração:\n\n*Por quem orar:* ${userState[chatId].nome}\n\n*Motivo:* ${userState[chatId].motivo}\n\n*Enviado por:* ${msg.from.first_name} ${msg.from.last_name}`, {parse_mode: 'Markdown'});
+        await bot.sendMessage(grupoId, `#PedidoOração:\n\n*Por quem orar:* ${nome}\n\n*Motivo:* ${motivo}\n\n*Enviado por:* ${msg.from.first_name} ${msg.from.last_name}`, {parse_mode: 'Markdown'});
     }
   }
   
