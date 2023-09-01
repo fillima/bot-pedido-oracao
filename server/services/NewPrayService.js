@@ -11,22 +11,16 @@ class NewPrayService {
     async pray(bot, msg) {
       try {
         const chatId = msg.chat.id;
-
-        // Remova o listener 'message' anterior (se houver)
-        bot.removeListener('message', this.messageListener);
         
         step = await this.newName(bot, chatId, msg);
 
-        this.messageListener = async (message) => {
+        bot.on('message', async (message) => {
             if (step === NOME) {
                 step = await this.newReason(bot, chatId, message);
             } else if (step === MOTIVO) {
                 await this.sendMessage(bot, chatId, message);
-                bot.on('message', this.messageListener);
             }
-        };
-
-        bot.on('message', this.messageListener);
+        });
       } catch (error) {
         console.error(error);
       }
