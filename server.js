@@ -2,7 +2,9 @@ process.env.NTBA_FIX_319 = 1;
 
 require('dotenv').config();
 
-const PORT = process.env.PORT || 3000;
+const express = require('express');
+
+const app = express();
 
 const TelegramBot = require('node-telegram-bot-api');
 
@@ -12,6 +14,6 @@ const { BotController } = require('./server/controllers');
 const bot = new TelegramBot(telegramConfig.token, { polling: true });
 const botController = new BotController(bot);
 
-app.listen(PORT, () => {
-    botController.handle();
-});
+botController.handle();
+
+app.listen(3000);
