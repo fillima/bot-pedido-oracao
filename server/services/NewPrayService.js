@@ -9,13 +9,15 @@ class NewPrayService {
     async pray(bot, msg) {
       try {
         const chatId = msg.chat.id;
-        userState[chatId] = {};
-        await this.newName(bot, chatId, msg);
+        if (!userState[chatId]) {
+            userState[chatId] = {};
+        }
+        let step = await this.newName(bot, chatId, msg);
 
         bot.on('message', async (message) => {
-            if (userState[chatId].state === NOME) {
-                await this.newReason(bot, chatId, message);
-            } else if (userState[chatId].state === MOTIVO) {
+            if (step === NOME) {
+                step = await this.newReason(bot, chatId, message);
+            } else if (step === MOTIVO) {
                 await this.sendMessage(bot, chatId, message);
             }
 
@@ -31,13 +33,13 @@ class NewPrayService {
         let message = `Olá ${msg.from.first_name}, digite o nome de quem você gostaria que recebesse oração.`;
 
         await bot.sendMessage(chatId, message, { parse_mode: 'Markdown' });
-        userState[chatId].state = NOME;
+        return NOME;
     }
 
     async newReason(bot, chatId, msg) {
         await bot.sendMessage(chatId, "Ótimo! Agora envie o motivo de oração.");
         userState[chatId].nome = msg.text;
-        userState[chatId].state = MOTIVO;
+        return MOTIVO;
     }
 
     async sendMessage(bot, chatId, msg) {
