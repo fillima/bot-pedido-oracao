@@ -12,7 +12,7 @@ class NewPrayService {
         userState[chatId] = {};
         await this.newName(bot, chatId, msg);
 
-        bot.on('message', (message) => {
+        await bot.on('message', (message) => {
             if (userState[chatId].state === NOME) {
                 this.newReason(bot, chatId, message);
             } else if (userState[chatId].state === MOTIVO) {
